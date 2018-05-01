@@ -12,14 +12,14 @@ class VersionSpec extends WordSpec with Matchers {
 
       "produce a proper ordering" in {
 
-        val v1 = Version(0, 0, 1)
-        val v2 = Version(0, 1, 1)
-        val v3 = Version(1, 0, 0)
-        val v4 = Version(1, 0, 0)
-        val v5 = Version(1, 0, 0, "a_test")
-        val v6 = Version(1, 0, 0, "b_test")
-        val v7 = Version(13, 0, 0)
-        val v8 = Version(50, 50, 50)
+        val v1       = Version(0, 0, 1)
+        val v2       = Version(0, 1, 1)
+        val v3       = Version(1, 0, 0)
+        val v4       = Version(1, 0, 0)
+        val v5       = Version(1, 0, 0, "a_test")
+        val v6       = Version(1, 0, 0, "b_test")
+        val v7       = Version(13, 0, 0)
+        val v8       = Version(50, 50, 50)
         val versions = List(v1, v2, v3, v4, v5, v6, v7, v8)
 
         Random.shuffle(versions).sorted should contain inOrderElementsOf versions

@@ -15,11 +15,11 @@ import scala.concurrent.ExecutionContext
   * @param executionContext      program execution context
   */
 class AvroKafkaSerde(
-  implicit val schemaRegistryService: SchemaRegistryService,
-  implicit val executionContext: ExecutionContext
+    implicit val schemaRegistryService: SchemaRegistryService,
+    implicit val executionContext: ExecutionContext
 ) extends Serde[Payload] {
 
-  private val avroKafkaSerializer = new AvroKafkaSerializer()
+  private val avroKafkaSerializer   = new AvroKafkaSerializer()
   private val avroKafkaDeserializer = new AvroKafkaDeserializer()
 
   override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {

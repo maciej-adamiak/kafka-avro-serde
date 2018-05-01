@@ -1,7 +1,7 @@
 package dev.madamiak.kafka.model
 
 /**
-  * Semantic versioning specification partial implementation 
+  * Semantic versioning specification partial implementation
   *
   * @param major version when you make incompatible API changes
   * @param minor version when you add functionality in a backwards-compatible manner, and
@@ -9,7 +9,8 @@ package dev.madamiak.kafka.model
   * @param pre   additional labels for pre-release
   * @see https://semver.org/
   */
-class Version(val major: Int, val minor: Int, val patch: Int, val pre: Option[String] = None) extends Ordered[Version] {
+class Version(val major: Int, val minor: Int, val patch: Int, val pre: Option[String] = None)
+    extends Ordered[Version] {
 
   require(major >= 0)
   require(minor >= 0)
@@ -50,10 +51,12 @@ object Version {
   private val semanticVersioning = """(\d+)?\.(\d+)?\.(\d+$|\d+)?\-?(\w+)?""".r
 
   def apply(version: String): Version = version match {
-    case semanticVersioning(major, minor, patch, pre) => Version(major.toInt, minor.toInt, patch.toInt, pre)
-    case _ => throw new IllegalArgumentException(s"cannot create version object from string $version")
+    case semanticVersioning(major, minor, patch, pre) =>
+      Version(major.toInt, minor.toInt, patch.toInt, pre)
+    case _ =>
+      throw new IllegalArgumentException(s"cannot create version object from string $version")
   }
 
-  def apply(major: Int, minor: Int, patch: Int, pre: String = null): Version = new Version(major, minor, patch, Option.apply(pre))
+  def apply(major: Int, minor: Int, patch: Int, pre: String = null): Version =
+    new Version(major, minor, patch, Option.apply(pre))
 }
-

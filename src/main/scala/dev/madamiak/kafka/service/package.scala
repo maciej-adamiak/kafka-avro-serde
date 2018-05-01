@@ -6,6 +6,7 @@ import scala.concurrent.duration.{FiniteDuration, Duration => SDuration}
 
 package object service {
 
-  implicit def toScalaDuration(jDuration: JDuration): FiniteDuration = SDuration.fromNanos(jDuration.toNanos)
+  implicit def toScalaDuration(jDuration: JDuration): FiniteDuration =
+    SDuration.fromNanos(jDuration.toNanos)
 
 }

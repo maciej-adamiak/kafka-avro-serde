@@ -1,20 +1,20 @@
 package dev.madamiak.kafka.service
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
+import akka.http.scaladsl.model.{ HttpResponse, StatusCodes }
 import akka.stream.ActorMaterializer
 import dev.madamiak.kafka.model.Version
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{ Matchers, WordSpec }
 import spray.json.DefaultJsonProtocol
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ Await, ExecutionContext, Future }
 
 class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with MockFactory with DefaultJsonProtocol {
 
-  implicit val system: ActorSystem = ActorSystem("test-kafka-avro-serde-system")
-  implicit val executor: ExecutionContext = system.dispatcher
+  implicit val system: ActorSystem             = ActorSystem("test-kafka-avro-serde-system")
+  implicit val executor: ExecutionContext      = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   private val responseEntity =
@@ -43,32 +43,43 @@ class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with M
           val mock = mockFunction[String, Version, Future[HttpResponse]]
 
           val sut = new DefaultSchemaRegistryHttpService() {
-            override def request(strain: String, version: Version): Future[HttpResponse] = mock(strain, version)
+            override def request(strain: String, version: Version): Future[HttpResponse] =
+              mock(strain, version)
           }
 
-          mock.expects(*, *).returning(
-            Future.apply(HttpResponse.apply(
-              entity = responseEntity
-            ))
-          ).once()
+          mock
+            .expects(*, *)
+            .returning(
+              Future.apply(
+                HttpResponse.apply(
+                  entity = responseEntity
+                )
+              )
+            )
+            .once()
 
           Await.result(sut.schema("testStrain", Version("1.0.0-test")), Duration.Inf)
           Await.result(sut.schema("testStrain", Version("1.0.0-test")), Duration.Inf)
         }
 
-
         "calling single strain and multiple versions" in {
           val mock = mockFunction[String, Version, Future[HttpResponse]]
 
           val sut = new DefaultSchemaRegistryHttpService() {
-            override def request(strain: String, version: Version): Future[HttpResponse] = mock(strain, version)
+            override def request(strain: String, version: Version): Future[HttpResponse] =
+              mock(strain, version)
           }
 
-          mock.expects(*, *).returning(
-            Future.apply(HttpResponse.apply(
-              entity = responseEntity
-            ))
-          ).twice()
+          mock
+            .expects(*, *)
+            .returning(
+              Future.apply(
+                HttpResponse.apply(
+                  entity = responseEntity
+                )
+              )
+            )
+            .twice()
 
           Await.result(sut.schema("testStrain", Version("1.0.0-test")), Duration.Inf)
           Await.result(sut.schema("testStrain", Version("1.5.0-test")), Duration.Inf)
@@ -81,36 +92,51 @@ class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with M
       val mock = mockFunction[String, Version, Future[HttpResponse]]
 
       val sut = new DefaultSchemaRegistryHttpService() {
-        override def request(strain: String, version: Version): Future[HttpResponse] = mock(strain, version)
+        override def request(strain: String, version: Version): Future[HttpResponse] =
+          mock(strain, version)
       }
 
-      mock.expects("testStrain", Version("1.0.0-test")).returning(
-        Future.apply(HttpResponse.apply(
-          entity = responseEntity
-        ))
-      ).once()
+      mock
+        .expects("testStrain", Version("1.0.0-test"))
+        .returning(
+          Future.apply(
+            HttpResponse.apply(
+              entity = responseEntity
+            )
+          )
+        )
+        .once()
 
-      Await.result(sut.schema("testStrain", Version("1.0.0-test")), Duration.Inf).getFullName should equal("generic.event")
+      Await
+        .result(sut.schema("testStrain", Version("1.0.0-test")), Duration.Inf)
+        .getFullName should equal("generic.event")
     }
 
     "fail when negotiation cannot be performed" in {
       val mock = mockFunction[String, Version, Future[HttpResponse]]
 
       val sut = new DefaultSchemaRegistryHttpService() {
-        override def request(strain: String, version: Version): Future[HttpResponse] = mock(strain, version)
+        override def request(strain: String, version: Version): Future[HttpResponse] =
+          mock(strain, version)
       }
 
-      mock.expects("testStrain", Version("1.0.0-test")).returning(
-        Future.apply(HttpResponse.apply(
-          status = StatusCodes.GatewayTimeout
-        ))
-      ).once()
+      mock
+        .expects("testStrain", Version("1.0.0-test"))
+        .returning(
+          Future.apply(
+            HttpResponse.apply(
+              status = StatusCodes.GatewayTimeout
+            )
+          )
+        )
+        .once()
 
       intercept[SchemaNegotiationException] {
-        Await.result(sut.schema("testStrain", Version("1.0.0-test")), Duration.Inf).getFullName should equal("generic.event")
+        Await
+          .result(sut.schema("testStrain", Version("1.0.0-test")), Duration.Inf)
+          .getFullName should equal("generic.event")
       }
     }
   }
-
 
 }

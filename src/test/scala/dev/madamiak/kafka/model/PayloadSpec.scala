@@ -1,6 +1,6 @@
 package dev.madamiak.kafka.model
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{ Matchers, WordSpec }
 
 class PayloadSpec extends WordSpec with Matchers {
 
@@ -9,8 +9,10 @@ class PayloadSpec extends WordSpec with Matchers {
     "handling JSON" should {
       import spray.json._
 
+      val payload = Payload("testStrain", Version(1, 2, 0), """{}""".parseJson.asJsObject)
+
       "successfully write JSON" in {
-        Payload("testStrain", Version(1, 2, 0), """{}""".parseJson.asJsObject).toJson.toString shouldEqual """{"strain":"testStrain","version":"1.2.0","data":{}}"""
+        payload.toJson.toString shouldEqual """{"strain":"testStrain","version":"1.2.0","data":{}}"""
       }
 
       "successfully read JSON" in {
@@ -20,11 +22,11 @@ class PayloadSpec extends WordSpec with Matchers {
           |   "data":{
           |   }
           |}
-        """.stripMargin.parseJson.convertTo[Payload] shouldEqual Payload("testStrain", Version(1, 2, 0), """{}""".parseJson.asJsObject)
+        """.stripMargin.parseJson.convertTo[Payload] shouldEqual payload
       }
 
       "be reflexive" in {
-        val payload = Payload("testStrain", Version(1, 2, 0), """{}""".parseJson.asJsObject)
+        val payload = payload
         payload.toJson.toString.parseJson.convertTo[Payload] shouldEqual payload
       }
     }

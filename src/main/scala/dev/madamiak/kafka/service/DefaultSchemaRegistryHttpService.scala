@@ -2,16 +2,16 @@ package dev.madamiak.kafka.service
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
+import akka.http.scaladsl.model.{ HttpRequest, HttpResponse, StatusCodes }
 import akka.stream.ActorMaterializer
-import com.github.benmanes.caffeine.cache.{Caffeine, Cache => CCache}
+import com.github.benmanes.caffeine.cache.{ Caffeine, Cache => CCache }
 import com.typesafe.config.ConfigFactory.load
 import dev.madamiak.kafka.model.Version
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
 import spray.json._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scalacache._
 import scalacache.caffeine._
 import scalacache.memoization._
@@ -28,38 +28,42 @@ import scalacache.modes.scalaFuture._
   * @param materializer actor materializer
   */
 class DefaultSchemaRegistryHttpService(
-                                        implicit val system: ActorSystem,
-                                        implicit val context: ExecutionContext,
-                                        implicit val materializer: ActorMaterializer
+    implicit val system: ActorSystem,
+    implicit val context: ExecutionContext,
+    implicit val materializer: ActorMaterializer
 ) extends SchemaRegistryService {
 
-  private val underlyingCache: CCache[String, Entry[Schema]] = Caffeine.newBuilder()
+  private val underlyingCache: CCache[String, Entry[Schema]] = Caffeine
+    .newBuilder()
     .maximumSize(load().getInt("registry.schema.cache.size"))
     .build[String, Entry[Schema]]
 
   private implicit val scalaCache: CaffeineCache[Schema] = CaffeineCache(underlyingCache)
 
-  def schema(strain: String, version: Version): Future[Schema] = memoizeF(Some(load().getDuration("registry.schema.cache.expiration"))) {
-    for {
-      response <- request(strain, version)
-      schema <- response.status match {
-        case StatusCodes.OK => response.entity.toStrict(load().getDuration("registry.schema.negotiation.timeout"))
-          .map { e =>
-            e.data
-              .utf8String
-              .parseJson
-              .asJsObject
-              .getFields("schema")
-              .mkString
-          }
-        case _              => throw new SchemaNegotiationException
-      }
-    } yield new Parser().parse(schema)
-  }
+  def schema(strain: String, version: Version): Future[Schema] =
+    memoizeF(Some(load().getDuration("registry.schema.cache.expiration"))) {
+      for {
+        response <- request(strain, version)
+        schema <- response.status match {
+          case StatusCodes.OK =>
+            response.entity
+              .toStrict(load().getDuration("registry.schema.negotiation.timeout"))
+              .map { e =>
+                e.data.utf8String.parseJson.asJsObject
+                  .getFields("schema")
+                  .mkString
+              }
+          case _ => throw new SchemaNegotiationException
+        }
+      } yield new Parser().parse(schema)
+    }
 
   def request(strain: String, version: Version): Future[HttpResponse] =
-    Http().singleRequest(HttpRequest(
-      uri = s"http://${load().getString("registry.host")}:${load().getInt("registry.port")}/${load().getString("registry.path")}/$strain/${version.toString}"
-    ))
+    Http().singleRequest(
+      HttpRequest(
+        uri = s"http://${load().getString("registry.host")}:${load().getInt("registry.port")}/${load()
+          .getString("registry.path")}/$strain/${version.toString}"
+      )
+    )
 
 }
