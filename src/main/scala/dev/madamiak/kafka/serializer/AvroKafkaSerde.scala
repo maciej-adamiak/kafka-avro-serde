@@ -3,7 +3,7 @@ package dev.madamiak.kafka.serializer
 import java.util
 
 import dev.madamiak.kafka.model.Payload
-import dev.madamiak.kafka.service.SchemaRegistryService
+import dev.madamiak.kafka.service.SchemaNegotiationService
 import org.apache.kafka.common.serialization._
 
 import scala.concurrent.ExecutionContext
@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext
   * @param executionContext      program execution context
   */
 class AvroKafkaSerde(
-    implicit val schemaRegistryService: SchemaRegistryService,
+    implicit val schemaRegistryService: SchemaNegotiationService,
     implicit val executionContext: ExecutionContext
 ) extends Serde[Payload] {
 

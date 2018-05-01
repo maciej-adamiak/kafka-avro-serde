@@ -11,7 +11,7 @@ import spray.json.DefaultJsonProtocol
 import scala.concurrent.duration._
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
-class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with MockFactory with DefaultJsonProtocol {
+class DefaultSchemaNegotiationServiceTest extends WordSpec with Matchers with MockFactory with DefaultJsonProtocol {
 
   implicit val system: ActorSystem             = ActorSystem("test-kafka-avro-serde-system")
   implicit val executor: ExecutionContext      = system.dispatcher
@@ -42,7 +42,7 @@ class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with M
         "calling single strain and version" in {
           val mock = mockFunction[String, Version, Future[HttpResponse]]
 
-          val sut = new DefaultSchemaRegistryHttpService() {
+          val sut = new DefaultSchemaNegotiationService() {
             override def request(strain: String, version: Version): Future[HttpResponse] =
               mock(strain, version)
           }
@@ -65,7 +65,7 @@ class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with M
         "calling single strain and multiple versions" in {
           val mock = mockFunction[String, Version, Future[HttpResponse]]
 
-          val sut = new DefaultSchemaRegistryHttpService() {
+          val sut = new DefaultSchemaNegotiationService() {
             override def request(strain: String, version: Version): Future[HttpResponse] =
               mock(strain, version)
           }
@@ -91,7 +91,7 @@ class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with M
     "acquire valid result" in {
       val mock = mockFunction[String, Version, Future[HttpResponse]]
 
-      val sut = new DefaultSchemaRegistryHttpService() {
+      val sut = new DefaultSchemaNegotiationService() {
         override def request(strain: String, version: Version): Future[HttpResponse] =
           mock(strain, version)
       }
@@ -115,7 +115,7 @@ class DefaultSchemaRegistryHttpServiceTest extends WordSpec with Matchers with M
     "fail when negotiation cannot be performed" in {
       val mock = mockFunction[String, Version, Future[HttpResponse]]
 
-      val sut = new DefaultSchemaRegistryHttpService() {
+      val sut = new DefaultSchemaNegotiationService() {
         override def request(strain: String, version: Version): Future[HttpResponse] =
           mock(strain, version)
       }

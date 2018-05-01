@@ -3,7 +3,7 @@ package dev.madamiak.kafka.serializer
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import dev.madamiak.kafka.model.{ Payload, Version }
-import dev.madamiak.kafka.service.SchemaRegistryService
+import dev.madamiak.kafka.service.SchemaNegotiationService
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
 import org.apache.kafka.common.header.internals.RecordHeaders
@@ -17,7 +17,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 class AvroKafkaSerdeSpec extends WordSpec with Matchers with MockFactory with DefaultJsonProtocol {
 
-  implicit val schemaRegistryServiceStub: SchemaRegistryService = stub[SchemaRegistryService]
+  implicit val schemaRegistryServiceStub: SchemaNegotiationService = stub[SchemaNegotiationService]
 
   implicit val system: ActorSystem             = ActorSystem("test-system")
   implicit val executor: ExecutionContext      = system.dispatcher

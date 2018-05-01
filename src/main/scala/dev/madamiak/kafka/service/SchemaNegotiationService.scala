@@ -5,7 +5,7 @@ import org.apache.avro.Schema
 
 import scala.concurrent.Future
 
-trait SchemaRegistryService {
+trait SchemaNegotiationService {
 
   /**
     * Resolve an avro schema

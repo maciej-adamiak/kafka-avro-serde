@@ -1,6 +1,6 @@
 name := "kafka-avro-serde"
 organization := "dev.madamiak"
-version := "0.2.0"
+version := "0.3.0-SNAPSHOT"
 
 scalaVersion := "2.12.6"
 

@@ -3,7 +3,7 @@ package dev.madamiak.kafka.serializer
 import java.util
 
 import dev.madamiak.kafka.model.{ Payload, Version }
-import dev.madamiak.kafka.service.SchemaRegistryService
+import dev.madamiak.kafka.service.SchemaNegotiationService
 import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.ExtendedDeserializer
 import spray.json._
@@ -21,16 +21,18 @@ import scala.concurrent.{ Await, ExecutionContext }
   * @param executionContext      program execution context
   */
 class AvroKafkaDeserializer(
-    implicit val schemaRegistryService: SchemaRegistryService,
+    implicit val schemaRegistryService: SchemaNegotiationService,
     implicit val executionContext: ExecutionContext
 ) extends ExtendedDeserializer[Payload] {
 
   private val converter = new JsonAvroConverter
 
-  private var negotiationTimeout: Int = 300
+  private var negotiationTimeout: Int = 1000
 
   override def configure(configs: util.Map[String, _], isKey: Boolean): Unit =
-    negotiationTimeout = configs.asScala.getOrElse("registry.negotiation.timeout", 300).asInstanceOf[Int]
+    negotiationTimeout = configs.asScala
+      .getOrElse("registry.negotiation.timeout", 1000)
+      .asInstanceOf[Int]
 
   override def close(): Unit = {}
 

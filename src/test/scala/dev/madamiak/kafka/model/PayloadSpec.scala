@@ -26,7 +26,6 @@ class PayloadSpec extends WordSpec with Matchers {
       }
 
       "be reflexive" in {
-        val payload = payload
         payload.toJson.toString.parseJson.convertTo[Payload] shouldEqual payload
       }
     }

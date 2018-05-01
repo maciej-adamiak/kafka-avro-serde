@@ -3,6 +3,7 @@ package dev.madamiak.kafka.service
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ HttpRequest, HttpResponse, StatusCodes }
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import com.github.benmanes.caffeine.cache.{ Caffeine, Cache => CCache }
 import com.typesafe.config.ConfigFactory.load
@@ -27,11 +28,11 @@ import scalacache.modes.scalaFuture._
   * @param context      program execution context
   * @param materializer actor materializer
   */
-class DefaultSchemaRegistryHttpService(
+class DefaultSchemaNegotiationService(
     implicit val system: ActorSystem,
     implicit val context: ExecutionContext,
     implicit val materializer: ActorMaterializer
-) extends SchemaRegistryService {
+) extends SchemaNegotiationService {
 
   private val underlyingCache: CCache[String, Entry[Schema]] = Caffeine
     .newBuilder()
@@ -42,20 +43,21 @@ class DefaultSchemaRegistryHttpService(
 
   def schema(strain: String, version: Version): Future[Schema] =
     memoizeF(Some(load().getDuration("registry.schema.cache.expiration"))) {
-      for {
-        response <- request(strain, version)
-        schema <- response.status match {
-          case StatusCodes.OK =>
-            response.entity
-              .toStrict(load().getDuration("registry.schema.negotiation.timeout"))
-              .map { e =>
-                e.data.utf8String.parseJson.asJsObject
-                  .getFields("schema")
-                  .mkString
-              }
-          case _ => throw new SchemaNegotiationException
-        }
-      } yield new Parser().parse(schema)
+
+      request(strain, version)
+        .flatMap(
+          response =>
+            response.status match {
+              case StatusCodes.OK => Unmarshal(response.entity).to[String]
+              case _              => Future.failed(new SchemaNegotiationException)
+          }
+        )
+        .map(
+          _.parseJson.asJsObject
+            .getFields("schema")
+            .mkString
+        )
+        .map(x => new Parser().parse(x))
     }
 
   def request(strain: String, version: Version): Future[HttpResponse] =
