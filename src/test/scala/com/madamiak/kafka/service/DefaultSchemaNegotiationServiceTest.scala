@@ -1,9 +1,9 @@
-package dev.madamiak.kafka.service
+package com.madamiak.kafka.service
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{ HttpResponse, StatusCodes }
 import akka.stream.ActorMaterializer
-import dev.madamiak.kafka.model.Version
+import com.madamiak.kafka.model.Version
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{ Matchers, WordSpec }
 import spray.json.DefaultJsonProtocol

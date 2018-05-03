@@ -1,4 +1,4 @@
-package dev.madamiak.kafka.model
+package com.madamiak.kafka.model
 
 import spray.json._
 

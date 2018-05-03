@@ -1,4 +1,4 @@
-package dev.madamiak.kafka.service
+package com.madamiak.kafka.service
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -6,17 +6,17 @@ import akka.http.scaladsl.model.{ HttpRequest, HttpResponse, StatusCodes }
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import com.github.benmanes.caffeine.cache.{ Caffeine, Cache => CCache }
+import com.madamiak.kafka.model.Version
 import com.typesafe.config.ConfigFactory.load
-import dev.madamiak.kafka.model.Version
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
-import spray.json._
-
-import scala.concurrent.{ ExecutionContext, Future }
 import scalacache._
 import scalacache.caffeine._
 import scalacache.memoization._
 import scalacache.modes.scalaFuture._
+import spray.json._
+
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
   * Default schema registry service. Responsible for acquiring a schema from a chosen avro schema registry.

@@ -1,4 +1,4 @@
-package dev.madamiak.kafka.model
+package com.madamiak.kafka.model
 
 /**
   * Semantic versioning specification partial implementation
@@ -9,8 +9,7 @@ package dev.madamiak.kafka.model
   * @param pre   additional labels for pre-release
   * @see https://semver.org/
   */
-class Version(val major: Int, val minor: Int, val patch: Int, val pre: Option[String] = None)
-    extends Ordered[Version] {
+class Version(val major: Int, val minor: Int, val patch: Int, val pre: Option[String] = None) extends Ordered[Version] {
 
   require(major >= 0)
   require(minor >= 0)
@@ -24,10 +23,10 @@ class Version(val major: Int, val minor: Int, val patch: Int, val pre: Option[St
   override def equals(other: Any): Boolean = other match {
     case that: Version =>
       (that canEqual this) &&
-        major == that.major &&
-        minor == that.minor &&
-        patch == that.patch &&
-        pre == that.pre
+      major == that.major &&
+      minor == that.minor &&
+      patch == that.patch &&
+      pre == that.pre
     case _ => false
   }
 
@@ -38,13 +37,12 @@ class Version(val major: Int, val minor: Int, val patch: Int, val pre: Option[St
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 
-  override def compare(that: Version): Int = {
+  override def compare(that: Version): Int =
     if (this.major != that.major) this.major.compareTo(that.major)
     else if (this.minor != that.minor) this.minor.compareTo(that.minor)
     else if (this.patch != that.patch) this.patch.compareTo(that.patch)
     else if (this.pre != that.pre) implicitly[Ordering[Option[String]]].compare(this.pre, that.pre)
     else 0
-  }
 }
 
 object Version {

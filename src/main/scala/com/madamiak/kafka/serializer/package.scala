@@ -1,4 +1,4 @@
-package dev.madamiak.kafka
+package com.madamiak.kafka
 
 package object serializer {
 

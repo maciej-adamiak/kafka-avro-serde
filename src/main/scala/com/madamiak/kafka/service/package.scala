@@ -1,8 +1,8 @@
-package dev.madamiak.kafka
+package com.madamiak.kafka
 
-import java.time.{Duration => JDuration}
+import java.time.{ Duration => JDuration }
 
-import scala.concurrent.duration.{FiniteDuration, Duration => SDuration}
+import scala.concurrent.duration.{ FiniteDuration, Duration => SDuration }
 
 package object service {
 

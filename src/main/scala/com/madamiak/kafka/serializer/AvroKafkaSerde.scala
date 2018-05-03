@@ -1,9 +1,9 @@
-package dev.madamiak.kafka.serializer
+package com.madamiak.kafka.serializer
 
 import java.util
 
-import dev.madamiak.kafka.model.Payload
-import dev.madamiak.kafka.service.SchemaNegotiationService
+import com.madamiak.kafka.model.Payload
+import com.madamiak.kafka.service.SchemaNegotiationService
 import org.apache.kafka.common.serialization._
 
 import scala.concurrent.ExecutionContext

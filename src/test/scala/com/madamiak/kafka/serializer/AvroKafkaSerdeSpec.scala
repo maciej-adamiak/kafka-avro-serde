@@ -1,9 +1,9 @@
-package dev.madamiak.kafka.serializer
+package com.madamiak.kafka.serializer
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import dev.madamiak.kafka.model.{ Payload, Version }
-import dev.madamiak.kafka.service.SchemaNegotiationService
+import com.madamiak.kafka.model.{ Payload, Version }
+import com.madamiak.kafka.service.SchemaNegotiationService
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
 import org.apache.kafka.common.header.internals.RecordHeaders

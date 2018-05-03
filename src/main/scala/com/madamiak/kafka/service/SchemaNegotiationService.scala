@@ -1,6 +1,6 @@
-package dev.madamiak.kafka.service
+package com.madamiak.kafka.service
 
-import dev.madamiak.kafka.model.Version
+import com.madamiak.kafka.model.Version
 import org.apache.avro.Schema
 
 import scala.concurrent.Future
