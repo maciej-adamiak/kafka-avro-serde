@@ -2,12 +2,12 @@ package com.madamiak.kafka.service
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{ HttpRequest, HttpResponse, StatusCodes }
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
-import com.github.benmanes.caffeine.cache.{ Caffeine, Cache => CCache }
+import com.github.benmanes.caffeine.cache.{Caffeine, Cache => CCache}
 import com.madamiak.kafka.model.Version
-import com.typesafe.config.ConfigFactory.load
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Parser
 import scalacache._
@@ -16,7 +16,7 @@ import scalacache.memoization._
 import scalacache.modes.scalaFuture._
 import spray.json._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Default schema registry service. Responsible for acquiring a schema from a chosen avro schema registry.
@@ -34,15 +34,17 @@ class DefaultSchemaNegotiationService(
     implicit val materializer: ActorMaterializer
 ) extends SchemaNegotiationService {
 
+  private val config: Config = ConfigFactory.load()
+
   private val underlyingCache: CCache[String, Entry[Schema]] = Caffeine
     .newBuilder()
-    .maximumSize(load().getInt("registry.schema.cache.size"))
+    .maximumSize(config.getInt("registry.schema.cache.size"))
     .build[String, Entry[Schema]]
 
   private implicit val scalaCache: CaffeineCache[Schema] = CaffeineCache(underlyingCache)
 
   def schema(strain: String, version: Version): Future[Schema] =
-    memoizeF(Some(load().getDuration("registry.schema.cache.expiration"))) {
+    memoizeF(Some(config.getDuration("registry.schema.cache.expiration"))) {
 
       request(strain, version)
         .flatMap(
@@ -63,7 +65,7 @@ class DefaultSchemaNegotiationService(
   def request(strain: String, version: Version): Future[HttpResponse] =
     Http().singleRequest(
       HttpRequest(
-        uri = s"http://${load().getString("registry.host")}:${load().getInt("registry.port")}/${load()
+        uri = s"http://${config.getString("registry.host")}:${config.getInt("registry.port")}/${config
           .getString("registry.path")}/$strain/${version.toString}"
       )
     )
