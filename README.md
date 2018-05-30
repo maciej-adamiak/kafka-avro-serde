@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/maciej-adamiak/kafka-avro-serde.svg?branch=master)](https://travis-ci.org/maciej-adamiak/kafka-avro-serde)
+[![codecov](https://codecov.io/gh/maciej-adamiak/kafka-avro-serde/branch/master/graph/badge.svg)](https://codecov.io/gh/maciej-adamiak/kafka-avro-serde)
+[![CodeFactor](https://www.codefactor.io/repository/github/maciej-adamiak/kafka-avro-serde/badge)](https://www.codefactor.io/repository/github/maciej-adamiak/kafka-avro-serde)
+
 # Kafka Avro serializer/deserializer
 
 Serializer and deserializer implementation that utilizes [Avro](http://avro.apache.org/) format to store and read data from Kafka. Uses an external, configurable schema registry.
